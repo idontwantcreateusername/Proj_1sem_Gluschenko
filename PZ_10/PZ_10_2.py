@@ -4,8 +4,10 @@
 q = open('text18-5.txt', 'r', encoding='utf-8')  # открываем файл
 w = q.read()  # переносим содержимое в переменную
 q.close()
+
 print(w)  # вывод в консоль
 print(len(w))  # вывод колличества букв
-e = open('text18-5_result.txt', 'w', encoding='utf-8')  # создание файла с рзультатом
+
+e = open('text18-5_result.txt', 'w', encoding='utf-8')  # создание файла для результата
 e.write(w.upper())  # пишем агрессивную версию стихотворения
 e.close()
