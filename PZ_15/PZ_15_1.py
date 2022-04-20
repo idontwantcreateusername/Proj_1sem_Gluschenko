@@ -1,18 +1,7 @@
 # В матрице элементы второго столбца возвести в квадрат
 # Вариант 5
+import numpy as np
 
-row = int(input('введите количество рядов: '))
-column = int(input('введите количество столбцов(>2): '))
-matrix = []
-for i in range(column):  # вводим матрицу
-    a = []
-    for j in range(row):
-        a.append(int(input('введите {} элемент {} столбца\n'.format(j + 1, i + 1))))
-    matrix.append(a)
-
-matrix[1] = list(i ** 2 for i in matrix[1])  # вычисляем
-
-for i in range(row):  # выводим матрицу
-    for j in range(column):
-        print(matrix[j][i], end=" ")
-    print()
+print('\n'.join(list(map(lambda x: ' '.join(list(map(lambda y: str(int(y) ** 2) if list(x).index(y) == 2 else str(y), x))),
+                         np.random.randint(0, 100, (int(input('введите количество строк: ')),
+                                                   int(input('введите количество столбцов: '))))))))
