@@ -13,7 +13,7 @@ class Main(tk.Frame):
         self.view_records()
 
     def init_main(self):
-        toolbar = tk.Frame(bg='#a0dea0', bd=4)
+        toolbar = tk.Frame(bg='#ff00ff', bd=4)
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
         self.add_img = tk.PhotoImage(file="BD/11.png")
@@ -27,7 +27,7 @@ class Main(tk.Frame):
         btn_edit_dialog.pack(side=tk.LEFT)
 
         self.delete_img = tk.PhotoImage(file="BD/13.png")
-        btn_delete = tk.Button(toolbar, text="Удалить запись", command=self.delete_records(), bg='#5da130',
+        btn_delete = tk.Button(toolbar, text="Удалить запись", command=self.del_rec, bg='#5da130',
                                bd=0, compound=tk.TOP, image=self.delete_img)
         btn_delete.pack(side=tk.LEFT)
 
@@ -72,8 +72,8 @@ class Main(tk.Frame):
 
     def update_record(self, user_id, sn, nm, fn, ppay, ppy, lod, crd, ttl):
         self.db.cur.execute(
-            """UPDATE users SET user_id=?, sn=?, nm=?, fn=?, ppay=?, ppy=?, lod=?, crd=?, ttl=? WHERE user_id=?""",
-            (user_id, sn, nm, fn, ppay, ppy, lod, crd, ttl, self.tree.set(self.tree.selection()[0], '#1')))
+            """UPDATE users SET sn=?, nm=?, fn=?, ppay=?, ppy=?, lod=?, crd=?, ttl=? WHERE user_id=?""",
+            (sn, nm, fn, ppay, ppy, lod, crd, ttl, user_id))
         self.db.con.commit()
         self.view_records()
 
@@ -82,9 +82,8 @@ class Main(tk.Frame):
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.cur.fetchall()]
 
-    def delete_records(self):
-        for selection_item in self.tree.selection():
-            self.db.cur.execute("""DELETE FROM users WHERE user_id=?""", (self.tree.set(selection_item[0], '#1'),))
+    def delete_records(self, uid):
+        self.db.cur.execute("""DELETE FROM users WHERE user_id=?""", uid)
         self.db.con.commit()
         self.view_records()
 
@@ -95,8 +94,8 @@ class Main(tk.Frame):
     #     [self.tree.insert('', 'end', values=row) for row in self.db.cur.fetchall()]
 
     def search_records(self, score):
-        score = (score,)
-        self.db.cur.execute("""SELECT * FROM users WHERE score>?""", score)
+        score = (score, )
+        self.db.cur.execute("""SELECT * FROM users WHERE sn=?""", score)
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.cur.fetchall()]
 
@@ -235,7 +234,7 @@ class DelRec(tk.Toplevel):
 
         btn_search = ttk.Button(self, text="удалить")
         btn_search.place(x=105, y=50)
-        btn_search.bind('<Button-1>', lambda event: self.view.delete_records())
+        btn_search.bind('<Button-1>', lambda event: self.view.delete_records(self.entry_search.get()))
 
 
 class Search(tk.Toplevel):
